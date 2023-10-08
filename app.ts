@@ -45,7 +45,7 @@ app.route('/').get((req, res, next) => {
     res.send('Express server');
 });
 
-
-app.listen(process.env.PORT || 3000, "0.0.0.0", function () {
+const newLocal: number = parseInt(process.env.PORT) || 3000;
+app.listen(newLocal, "0.0.0.0", function () {
     console.log("backend running");
 });
