@@ -1,23 +1,29 @@
 import mongoose, { Schema } from "mongoose";
-import User from '../models/userModel'
+import User from '../models/userModel';
 
-const ImageSchema = new mongoose.Schema({
+const imageSchema: Schema = new mongoose.Schema({
     postName: {
         type: String,
-        // required: true
+        required: true,
     },
     uploadedBy: {
-        type: Schema.Types.ObjectId,
-        // required: true,
-        ref: 'User'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
-    imageName: {
-        data: Buffer,
-        // required: true,
-        contentType: String
-    }
-}, { timestamps: true });
+    username: {
+        type: String,
+        required: true
+    },
+    imageData: {
+        type: String, // Store the image data as base64
+        required: true,
+    },
+}, {
+    timestamps: true
+});
 
-const Image = mongoose.model('Image', ImageSchema);
+const Image = mongoose.model('Image', imageSchema);
+
 
 export default Image;
