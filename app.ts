@@ -44,3 +44,8 @@ mongoose.connect(MONGO_URL).then(async (res) => {
 app.route('/').get((req, res, next) => {
     res.send('Express server');
 });
+
+
+app.listen(process.env.PORT || 3000, "0.0.0.0", function () {
+    console.log("backend running");
+});
