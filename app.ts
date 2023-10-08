@@ -5,11 +5,14 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import dotenv from "dotenv";
 
 import registerRouter from './routes/registerRouter'
 import loginRouter from './routes/loginRouter'
 import userRouter from './routes/userRouter'
 import imageRouter from './routes/imageRouter'
+
+dotenv.config();
 
 const app = express();
 
@@ -27,9 +30,10 @@ app.use('/', loginRouter);
 app.use('/', userRouter);
 app.use('/', imageRouter);
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
-const MONGO_URL = 'mongodb+srv://rishabh:C6jvTT6DJtubGXmf@cluster0.agb8tws.mongodb.net/'
+const MONGO_URL: string = process.env.MONGO_URL.toString();
+
 mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL).then(async (res) => {
     await console.log("Connected to MongoDB");
@@ -37,9 +41,9 @@ mongoose.connect(MONGO_URL).then(async (res) => {
     console.log(err);
 });
 
-// server.listen(8080, () => {
-//     console.log("Server running on http://localhost:8080/");
-// });
+server.listen(8080, () => {
+    console.log("Local Server running on http://localhost:8080/");
+});
 
 app.route('/').get((req, res, next) => {
     res.send('Express server');
