@@ -27,7 +27,7 @@ app.use('/', loginRouter);
 app.use('/', userRouter);
 app.use('/', imageRouter);
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 const MONGO_URL = 'mongodb+srv://rishabh:C6jvTT6DJtubGXmf@cluster0.agb8tws.mongodb.net/'
 mongoose.Promise = Promise;
@@ -37,9 +37,9 @@ mongoose.connect(MONGO_URL).then(async (res) => {
     console.log(err);
 });
 
-server.listen(8080, () => {
-    console.log("Server running on http://localhost:8080/");
-});
+// server.listen(8080, () => {
+//     console.log("Server running on http://localhost:8080/");
+// });
 
 app.route('/').get((req, res, next) => {
     res.send('Express server');
