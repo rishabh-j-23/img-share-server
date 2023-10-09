@@ -20,10 +20,18 @@ app.use(cors({
     credentials: true
 }));
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
 app.use(cookieParser());
 app.use(compression());
-
+app.use((req: express.Request, res: express.Response, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
+    const allowedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+    if (!allowedMethods.includes(req.method))
+        throw new Error('Method not allowed.')
+    next()
+})
 
 app.use('/', registerRouter);
 app.use('/', loginRouter);
