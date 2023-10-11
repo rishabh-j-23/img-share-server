@@ -39,7 +39,21 @@ imageRouter.route('/image/upload')
 imageRouter.route('/image/user')
     .get(async (req: Request, res: Response) => {
         const { username } = req.query;
-        const imagesByUser = await Image.find({username: username });
+        const imagesByUser = await Image.find({ username: username });
         return res.status(200).json(imagesByUser);
     })
+
+imageRouter.route('/image/search')
+    .get(async (req: express.Request, res: express.Response) => {
+        try {
+            const { searchPost } = req.query;
+
+            const resultImages = await Image.find({ postName: { $regex: searchPost } });
+
+            return res.status(200).json(resultImages);
+        } catch (error) {
+            console.log(error);
+            return res.status(404).json(error);
+        }
+    });
 export default imageRouter;
