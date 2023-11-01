@@ -1,7 +1,10 @@
 import crypto from 'crypto';
 import express, { Request, Response } from 'express';
-import { createUser, getUserByEmail} from './actions/userAction';
+import { createUser, getUserByEmail } from './actions/userAction';
+import dotenv from 'dotenv';
 import User from './models/userModel';
+
+dotenv.config();
 
 const SECRET = 'IMG-SHARE-API-SECRET';
 
@@ -60,7 +63,7 @@ export const login = async (req: Request, res: Response) => {
         user.sessionToken = authentication(salt, user._id.toString());
         await user.save();
 
-        return res.cookie('IMG-SHARE', user.sessionToken, { domain: 'localhost', path: '/' }).status(200).json(user).end();
+        return res.cookie('IMG-SHARE', user.sessionToken, {  path: '/' }).status(200).json(user).end();
 
     } catch (err) {
         console.log(err);
