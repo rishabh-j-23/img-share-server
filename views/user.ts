@@ -8,9 +8,9 @@ export const getUserByEmail = (email: string) => User.findOne({ email });
 export const getUserByUsername = (username: string) => User.findOne({ username });
 export const getUserBySessionToken = (sessionToken: string) => User.findOne({ sessionToken });
 export const getUserById = (id: string) => User.findById(id);
-export const createUser = (req: express.Request, salt: string) => {
+export const createUser = (req: express.Request, salt: string, sessionToken: string) => {
     const { username, email, password } = req.body;
-    const user = new User({ username, email, password: authentication(salt, password), salt});
+    const user = new User({ username, email, password: authentication(salt, password), salt, sessionToken });
     user.save().then((res) => res.toObject());
     return user;
 };

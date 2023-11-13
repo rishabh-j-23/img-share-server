@@ -10,10 +10,6 @@ userRouter.route('/users')
     .get(isAuthenticated, getAllUsers);
 
 userRouter.route('/user')
-    .get(getUserBySession);
-
-userRouter.route('/users/:id')
-    .delete(isAuthenticated, isOwner, deleteUser)
-    .patch(isAuthenticated, isOwner, updateUser);
+    .get(isAuthenticated, getUserBySession);
 
 export default userRouter;

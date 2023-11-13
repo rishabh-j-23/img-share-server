@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import express, { Request, Response } from 'express';
-import { createUser, getUserByEmail } from './actions/userAction';
+import { createUser, getUserByEmail } from './views/user';
 import dotenv from 'dotenv';
 import User from './models/userModel';
 
@@ -28,8 +28,10 @@ export const register = async (req: express.Request, res: express.Response) => {
         }
 
         const salt = random();
+        const sessionToken = authentication(salt, password);
+        const user = createUser(req, salt, sessionToken);
 
-        const user = createUser(req, salt);
+        res.header({ sessionToken: sessionToken });
 
         return res.status(200).json(user).end();
     } catch (err) {
@@ -62,8 +64,9 @@ export const login = async (req: Request, res: Response) => {
         const salt = random();
         user.sessionToken = authentication(salt, user._id.toString());
         await user.save();
+        res.header({ sessionToken: user.sessionToken });
 
-        return res.cookie('IMG-SHARE', user.sessionToken, {  path: '/' }).status(200).json(user).end();
+        return res.cookie('IMG-SHARE', user.sessionToken, {}).status(200).json(user).end();
 
     } catch (err) {
         console.log(err);

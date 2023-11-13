@@ -5,7 +5,7 @@ import { authentication } from '../authenticate';
 
 export const getImages = () => Image.find({}).populate('uploadedBy').exec();
 export const getImageByUsername = (username: string) => Image.findOne({ uploadedBy: { username: username } }).populate('uploadedBy').exec();
-export const getImageById = (id: string) => Image.findById(id).populate('uploadedBy').exec();
+export const getImageById = (id: string) => Image.findById(id);
 export const createImage = (req: express.Request) => {
     const { base64Image, user, imageName } = req.body;
     const image = new Image({ postName: imageName, uploadedBy: user, imageData: base64Image });

@@ -1,33 +1,32 @@
 import express, { Request, Response } from 'express';
 import { isAuthenticated } from '../middlewares/user'
-import { createImage, getImageByUsername, getImages } from '../actions/imageAction';
+import { createImage, getImageById, getImageByUsername, getImages } from '../views/image';
 import Image from '../models/imageModel';
-import { getUserBySessionToken, getUserByUsername } from '../actions/userAction';
 const imageRouter = express.Router();
 
 imageRouter.route('/images')
-    .get(async (req: express.Request, res: express.Response) => {
-        const allImages = await Image.find({}).populate('uploadedBy').exec();
+    .get(isAuthenticated, async (req: express.Request, res: express.Response) => {
+        const allImages = await Image.find({}).sort({ createdAt: -1 }).populate('uploadedBy').exec();
         res.status(200).json(allImages);
     })
 
 imageRouter.route('/image/upload')
-    .post(async (req: express.Request, res: express.Response) => {
-        const { imageData, uploadedBy, postName, username } = req.body;
+    .post(isAuthenticated, async (req: express.Request, res: express.Response) => {
+        const { imageData, uploadedBy, postName, username, description } = req.body;
 
         // Check if the required fields are provided
         if (!postName) {
-            return res.status(400).json({ error: 'Missing imagename fields' });
+            return res.status(400).json({ error: 'Missing post name field' });
         }
         if (!uploadedBy) {
-            return res.status(400).json({ error: 'Missing user fields' });
+            return res.status(400).json({ error: 'Missing user field' });
         }
         if (!imageData) {
-            return res.status(400).json({ error: 'Missing image fields' });
+            return res.status(400).json({ error: 'Missing image field' });
         }
 
         try {
-            const image = new Image({ postName: postName, uploadedBy: uploadedBy, imageData: imageData, username: username });
+            const image = new Image({ postName: postName, uploadedBy: uploadedBy, imageData: imageData, username: username, description: description });
             image.populate('uploadedBy');
             await image.save();
             res.status(201).json(image.toObject());
@@ -37,14 +36,14 @@ imageRouter.route('/image/upload')
     })
 
 imageRouter.route('/image/user')
-    .get(async (req: Request, res: Response) => {
+    .get(isAuthenticated, async (req: Request, res: Response) => {
         const { username } = req.query;
-        const imagesByUser = await Image.find({ username: username });
+        const imagesByUser = await Image.find({ username: username }).sort({ createdAt: -1 });
         return res.status(200).json(imagesByUser);
     })
 
 imageRouter.route('/image/search')
-    .get(async (req: express.Request, res: express.Response) => {
+    .get(isAuthenticated, async (req: express.Request, res: express.Response) => {
         try {
             const { searchPost } = req.query;
 
@@ -56,4 +55,16 @@ imageRouter.route('/image/search')
             return res.status(404).json(error);
         }
     });
+
+
+imageRouter.route('/image/id')
+    .get(isAuthenticated, async (req: express.Request, res: express.Response) => {
+        try {
+            const { id } = req.query;
+            const image = await getImageById(id as string);
+            return res.status(200).json(image);
+        } catch (error) {
+            return res.status(400).json({ error: "image not found" });
+        }
+    })
 export default imageRouter;

@@ -1,5 +1,5 @@
 import express from 'express';
-import { delelteUserById, getUserById, getUserBySessionToken, getUsers } from '../actions/userAction';
+import { delelteUserById, getUserById, getUserBySessionToken, getUsers } from '../views/user';
 
 export const getAllUsers = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -36,8 +36,8 @@ export const getUserBySession = async (req: express.Request, res: express.Respon
 
 export const updateUser = async (req: express.Request, res: express.Response) => {
     try {
-        const {id} = req.params;
-        const {username} = req.body;
+        const { id } = req.params;
+        const { username } = req.body;
 
         const user = await getUserById(id);
 

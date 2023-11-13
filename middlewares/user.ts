@@ -1,15 +1,15 @@
 import express from 'express';
 import { get, merge } from 'lodash';
 
-import { getUserBySessionToken } from '../actions/userAction';
+import { getUserBySessionToken } from '../views/user';
 
 export const isAuthenticated = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-        const sessionToken = req.cookies['IMG-SHARE'];
+        const sessionToken = req.headers['sessiontoken'];
         if (!sessionToken) {
             return res.sendStatus(400);
         }
-        const existingUser = await getUserBySessionToken(sessionToken);
+        const existingUser = await getUserBySessionToken(sessionToken.toString());
 
         if (!existingUser) {
             return res.sendStatus(403);
@@ -18,7 +18,7 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
         return next();
     } catch (err) {
         console.log(err);
-        return res.sendStatus(400);
+        return res.status(400).json({ error: "sessiontoken not found" });
     }
 }
 

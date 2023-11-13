@@ -19,6 +19,10 @@ const imageSchema: Schema = new mongoose.Schema({
         type: String, // Store the image data as base64
         required: true,
     },
+    description: {
+        type: String,
+        required: false
+    },
 }, {
     timestamps: true
 });
