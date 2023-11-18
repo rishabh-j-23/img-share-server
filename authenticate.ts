@@ -1,8 +1,7 @@
 import crypto from 'crypto';
 import express, { Request, Response } from 'express';
-import { createUser, getUserByEmail } from './views/user';
+import { createUser, getUserByEmail, getUserByUsername } from './views/user';
 import dotenv from 'dotenv';
-import User from './models/userModel';
 
 dotenv.config();
 
@@ -21,8 +20,9 @@ export const register = async (req: express.Request, res: express.Response) => {
             return res.sendStatus(400);
         }
 
-        const existUser = await getUserByEmail(email);
-        if (existUser) {
+        const existUserWithEmail = await getUserByEmail(email);
+        const existUsrWithUsername = await getUserByUsername(username);
+        if (existUserWithEmail || existUsrWithUsername) {
             res.status(400);
             return res.send('User with email already exits');
         }
@@ -64,9 +64,10 @@ export const login = async (req: Request, res: Response) => {
         const salt = random();
         user.sessionToken = authentication(salt, user._id.toString());
         await user.save();
+
         res.header({ sessionToken: user.sessionToken });
 
-        return res.cookie('IMG-SHARE', user.sessionToken, {}).status(200).json(user).end();
+        return res.cookie('IMG-SHARE', user.sessionToken, { path: "" }).status(200).json(user).end();
 
     } catch (err) {
         console.log(err);

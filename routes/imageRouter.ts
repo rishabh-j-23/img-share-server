@@ -2,13 +2,14 @@ import express, { Request, Response } from 'express';
 import { isAuthenticated } from '../middlewares/user'
 import { createImage, getImageById, getImageByUsername, getImages } from '../views/image';
 import Image from '../models/imageModel';
+import User from '../models/userModel';
 const imageRouter = express.Router();
 
 imageRouter.route('/images')
-    .get(isAuthenticated, async (req: express.Request, res: express.Response) => {
+    .get(async (req: express.Request, res: express.Response) => {
         const allImages = await Image.find({}).sort({ createdAt: -1 }).populate('uploadedBy').exec();
         res.status(200).json(allImages);
-    })
+    });
 
 imageRouter.route('/image/upload')
     .post(isAuthenticated, async (req: express.Request, res: express.Response) => {
@@ -29,6 +30,9 @@ imageRouter.route('/image/upload')
             const image = new Image({ postName: postName, uploadedBy: uploadedBy, imageData: imageData, username: username, description: description });
             image.populate('uploadedBy');
             await image.save();
+
+            await User.findByIdAndUpdate(uploadedBy, { $push: { sharedImages: image._id } });
+
             res.status(201).json(image.toObject());
         } catch (error) {
             res.status(500).json({ error: 'Internal server error' });
@@ -43,7 +47,7 @@ imageRouter.route('/image/user')
     })
 
 imageRouter.route('/image/search')
-    .get(isAuthenticated, async (req: express.Request, res: express.Response) => {
+    .get(async (req: express.Request, res: express.Response) => {
         try {
             const { searchPost } = req.query;
 
@@ -58,7 +62,7 @@ imageRouter.route('/image/search')
 
 
 imageRouter.route('/image/id')
-    .get(isAuthenticated, async (req: express.Request, res: express.Response) => {
+    .get(async (req: express.Request, res: express.Response) => {
         try {
             const { id } = req.query;
             const image = await getImageById(id as string);
