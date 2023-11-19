@@ -7,7 +7,11 @@ const imageRouter = express.Router();
 
 imageRouter.route('/images')
     .get(async (req: express.Request, res: express.Response) => {
-        const allImages = await Image.find({}).sort({ createdAt: -1 }).populate('uploadedBy').exec();
+        const allImages = await Image.find({})
+            .select(['postName', 'uploadedBy', 'description', 'updatedAt', 'createdAt'])
+            .sort({ createdAt: -1 })
+            .populate('uploadedBy')
+            .exec();
         res.status(200).json(allImages);
     });
 
