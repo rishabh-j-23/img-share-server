@@ -52,3 +52,5 @@ const newLocal: number = parseInt(process.env.PORT) || 3000;
 app.listen(newLocal, "0.0.0.0", function () {
     console.log("backend running");
 });
+
+module.exports = app;
