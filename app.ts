@@ -53,4 +53,4 @@ app.listen(newLocal, "0.0.0.0", function () {
     console.log("backend running");
 });
 
-module.exports = app;
+export default app;
