@@ -10,7 +10,6 @@ imageRouter.route('/images')
         const allImages = await Image.find({})
             .select(['postName', 'uploadedBy', 'description', 'updatedAt', 'createdAt'])
             .sort({ createdAt: -1 })
-            .populate('uploadedBy')
             .exec();
         res.status(200).json(allImages);
     });
